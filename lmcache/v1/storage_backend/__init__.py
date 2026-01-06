@@ -14,6 +14,7 @@ from lmcache.v1.config import LMCacheEngineConfig
 from lmcache.v1.metadata import LMCacheMetadata
 from lmcache.v1.storage_backend.abstract_backend import StorageBackendInterface
 from lmcache.v1.storage_backend.gds_backend import GdsBackend
+from lmcache.v1.storage_backend.fgds_backend import FgdsBackend
 from lmcache.v1.storage_backend.local_cpu_backend import LocalCPUBackend
 from lmcache.v1.storage_backend.local_disk_backend import LocalDiskBackend
 from lmcache.v1.storage_backend.p2p_backend import P2PBackend
@@ -217,6 +218,14 @@ def CreateStorageBackends(
             dst_device,
         )
         storage_backends[str(gds_backend)] = gds_backend
+    elif config.fgds_path is not None and "FgdsBackend" not in _skip:
+        fgds_backend = FgdsBackend(
+            config,
+            metadata,
+            loop,
+            dst_device,
+        )
+        storage_backends[str(fgds_backend)] = fgds_backend
 
     if config.remote_url is not None and "RemoteBackend" not in _skip:
         assert local_cpu_backend is not None, (
